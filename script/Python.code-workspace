@@ -1,0 +1,17 @@
+{
+	"folders": [
+		{
+			"path": "../.."
+		},
+		{
+			"path": "../../../Programation avancée"
+		}
+	],
+	"settings": {
+		"files.associations": {
+			"iosfwd": "cpp",
+			"iostream": "cpp",
+			"ostream": "cpp"
+		}
+	}
+}
