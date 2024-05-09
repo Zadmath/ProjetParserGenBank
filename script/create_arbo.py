@@ -11,7 +11,7 @@ import sys
 import stat
 import genericpath
 from multiprocessing import Pool, Process, Manager, Queue,cpu_count, Semaphore, Value, Event
-
+import progressionBAR as pb
 from genericpath import *
 from Bio import Entrez
 from Bio import SeqIO
@@ -49,53 +49,58 @@ ids_files = os.listdir('../GENOME_REPORTS/IDS/')
 organism_names_ids = []
 organism_paths_ids = []
 organism_NC_ids = []
-i = 0
 
-for ids in ids_files:
-    print(f"Traitement ids : {ids}")
-    i += 1
+def traitement_ids(progressbar,root,lbl = None):
+    i = 0
+    for ids in ids_files:
+        print(f"Traitement ids : {ids}")
+        i += 1
+        pb.init_bar(progressbar, root)
 
-    with open('../GENOME_REPORTS/IDS/' + ids) as f:
-        n_line = sum(1 for _ in f)
+        with open('../GENOME_REPORTS/IDS/' + ids) as f:
+            n_line = sum(1 for _ in f)
 
-    with open('../GENOME_REPORTS/IDS/' + ids) as f:
-        for i,row in enumerate(f):
-            # update l'affichage de la progression
+        with open('../GENOME_REPORTS/IDS/' + ids) as f:
+            for i,row in enumerate(f):
+                # update l'affichage de la progression
+                pb.update_bar(progressbar,root,n_line,i)
+                parsed_row = row.replace('\n', '').split('\t')
+                if (parsed_row[1][0:2] != 'NC'):
+                    continue
 
-            parsed_row = row.replace('\n', '').split('\t')
-            if (parsed_row[1][0:2] != 'NC'):
-                continue
+                try:
+                    index = organism_names.index(parsed_row[5])
 
-            try:
-                index = organism_names.index(parsed_row[5])
+                except ValueError:
+                    continue
+                try:
+                    if parsed_row[1] not in organism_NC_ids[organism_names_ids.index(organism_names[index])]:
+                        organism_NC_ids[organism_names_ids.index(organism_names[index])].append(parsed_row[1])
+                except ValueError:
 
-            except ValueError:
-                continue
-            try:
-                if parsed_row[1] not in organism_NC_ids[organism_names_ids.index(organism_names[index])]:
-                    organism_NC_ids[organism_names_ids.index(organism_names[index])].append(parsed_row[1])
-            except ValueError:
-
-                organism_names_ids.append(organism_names[index])
-                organism_paths_ids.append(organism_paths[index])
-                organism_NC_ids.append([parsed_row[1]])
-                name = organism_names[index].replace(" ", "_")
-                name = name.replace("[", "_")
-                name = name.replace("]", "_")
-                name = name.replace(":", "_")
-                name = name.replace("/", "_")
-                path = organism_paths[index] + name + "/"
-                if not os.path.exists(path):
-                    os.makedirs(path)
+                    organism_names_ids.append(organism_names[index])
+                    organism_paths_ids.append(organism_paths[index])
+                    organism_NC_ids.append([parsed_row[1]])
+                    name = organism_names[index].replace(" ", "_")
+                    name = name.replace("[", "_")
+                    name = name.replace("]", "_")
+                    name = name.replace(":", "_")
+                    name = name.replace("/", "_")
+                    path = organism_paths[index] + name + "/"
+                    if not os.path.exists(path):
+                        os.makedirs(path)
 
 
-#dataframe
-organism_df = pd.DataFrame({
-            "name":organism_names_ids,
-            "path":organism_paths_ids,
-            "NC":organism_NC_ids})
+    #dataframe
+    organism_df = pd.DataFrame({
+                "name":organism_names_ids,
+                "path":organism_paths_ids,
+                "NC":organism_NC_ids})
 
-# crée le fichier pickle sauvegardant le dataframe
-if not os.path.exists("../pickle"):
-    os.makedirs("../pickle")
+    # crée le fichier pickle sauvegardant le dataframe
+    if not os.path.exists("../pickle"):
+        os.makedirs("../pickle")
+    
+    with open("../pickle/organism_df", 'wb') as f:
+        pickle.dump(organism_df, f)
 
