@@ -12,6 +12,7 @@ import stat
 import genericpath
 from multiprocessing import Pool, Process, Manager, Queue,cpu_count, Semaphore, Value, Event
 import progressionBAR as pb
+import get_ids as get_ids
 from genericpath import *
 from Bio import Entrez
 from Bio import SeqIO
@@ -19,41 +20,46 @@ from Bio import SeqIO
 # parse overview.txt
 organism_names = []
 organism_paths = []
+def traitement_overview(progressbar,root,lbl):
 
-with open('../GENOME_REPORTS/overview.txt') as f:
-    print("traitement overview.txt...")
-    first_row = True
-    count_rows = 1
-    for row in f:
-        count_rows += 1
-        if first_row:
-            first_row=False
-            continue
-        parsed_row = row.split('\t')
+    with open('../GENOME_REPORTS/overview.txt') as f:
+        print("traitement du fichier overview.txt...")
+        first_row = True
+        count_rows = 1
+        for row in f:
+            count_rows += 1
+            if first_row:
+                first_row=False
+                continue
+            parsed_row = row.split('\t')
 
-        try :
-            organism = parsed_row[0].replace(' ','_').replace('/','_')
-            kingdom = parsed_row[1].replace(' ','_').replace('/','_')
-            group = parsed_row[2].replace(' ','_').replace('/','_')
-            subgroup = parsed_row[3].replace(' ','_').replace('/','_')
-            path = '../Results/' + kingdom +'/' + group +'/' + subgroup +'/' + organism
-            organism_names.append(parsed_row[0])
-            organism_paths.append('../Results/' + kingdom +'/' + group +'/' + subgroup +'/')
-        except IndexError :
-            print(f"IndexError sur {parsed_row}")
-            pass
-    print("terminé traitement overview.txt")
+            try :
+                organism = parsed_row[0].replace(' ','_').replace('/','_')
+                kingdom = parsed_row[1].replace(' ','_').replace('/','_')
+                group = parsed_row[2].replace(' ','_').replace('/','_')
+                subgroup = parsed_row[3].replace(' ','_').replace('/','_')
+                path = '../Results/' + kingdom +'/' + group +'/' + subgroup +'/' + organism
+                organism_names.append(parsed_row[0])
+                organism_paths.append('../Results/' + kingdom +'/' + group +'/' + subgroup +'/')
+            except IndexError :
+                print(f"IndexError sur {parsed_row}")
+                pass
+        print("terminé traitement overview.txt")
 
-# parse fichier ids
-ids_files = os.listdir('../GENOME_REPORTS/IDS/')
-organism_names_ids = []
-organism_paths_ids = []
-organism_NC_ids = []
 
-def traitement_ids(progressbar,root,lbl = None):
+def collect_ids(progressbar,root,lbl):
+    get_ids.get_ids()
+    traitement_overview(progressbar,root,lbl)
+    # parse fichier ids
+    ids_files = os.listdir('../GENOME_REPORTS/IDS/')
+    organism_names_ids = []
+    organism_paths_ids = []
+    organism_NC_ids = []
     i = 0
     for ids in ids_files:
+        root.update()
         print(f"Traitement ids : {ids}")
+        lbl["text"] = f"Traitement de '{ids}'"
         i += 1
         pb.init_bar(progressbar, root)
 

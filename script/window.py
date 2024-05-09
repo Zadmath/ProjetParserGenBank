@@ -33,10 +33,10 @@ HOVER_STOP_COLOR = "#ff0000"
 def collect_data() :
     #Création de la fenetre de bienvenue
     root = Tk()
-    root.title("Genbank - Bienvenue")
+    root.title("Parser GENBANK")
 
     #Affichage texte
-    lbl = Label(root, text="Création de l'arborescence en cours...",foreground=TXT_COLOR,background=BG_COLOR)
+    lbl = Label(root, text="Traitement des fichiers...",foreground=TXT_COLOR,background=BG_COLOR)
     lbl.pack(side = LEFT, anchor=  W, padx = 15, pady = 15)
     #Configuration du style de la progressbar
     style = ttk.Style(root)
@@ -47,7 +47,7 @@ def collect_data() :
     #Création progressbar
     progressbar = ttk.Progressbar(root,style="start.Horizontal.TProgressbar", orient = HORIZONTAL, length = 100, mode = 'determinate')
     progressbar.pack( padx = 15, pady = 15)
-    root.after(200,  lambda : arbo.traitement_ids(progressbar,root, lbl = lbl))
+    root.after(200,  lambda : arbo.collect_ids(progressbar,root, lbl = lbl))
     root.mainloop()
 
 class Affichage:
