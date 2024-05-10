@@ -31,29 +31,34 @@ VERT_FONCE = "#00ff00"
 ANTHRACITE = "#191a2d"
 
 
-def collect_data() :
-    #Création de la fenetre de bienvenue
-    root = Tk()
-    root.title("Parser GENBANK")
-
-    #Affichage texte
-    lbl = Label(root, text="Traitement des fichiers...",foreground=TXT_COLOR,background=BG_COLOR)
-    lbl.pack(side = LEFT, anchor=  W, padx = 15, pady = 15)
-    #Configuration du style de la progressbar
-    style = ttk.Style(root)
-    style.configure("start.Horizontal.TProgressbar", troughcolor=ANTHRACITE, background=TXT_COLOR, thickness=20)
-    root.configure(bg=ANTHRACITE )
-
-    
-    #Création progressbar
-    progressbar = ttk.Progressbar(root,style="start.Horizontal.TProgressbar", orient = HORIZONTAL, length = 100, mode = 'determinate')
-    progressbar.pack( padx = 15, pady = 15)
-    root.after(200,  lambda : arbo.collect_ids(progressbar,root, lbl = lbl))
-    root.mainloop()
-
 class Affichage:
     def __init__(self):
-        collect_data()
+        #Création de la fenetre de bienvenue
+        self.root = Tk()
+        self.root.title("Parser GENBANK")
+        
+        #Affichage texte
+        self.lbl = Label(self.root, text="Traitement des fichiers...",foreground=TXT_COLOR,background=BG_COLOR)
+        self.lbl.pack(side = LEFT, anchor=  W, padx = 15, pady = 15)
+        #Configuration du style de la progressbar
+        self.style = ttk.Style(self.root)
+        self.style.configure("start.Horizontal.TProgressbar", troughcolor=ANTHRACITE, background=TXT_COLOR, thickness=20)
+        self.root.configure(bg=ANTHRACITE )
+        
+        #Création progressbar
+        self.progressbar = ttk.Progressbar(self.root,style="start.Horizontal.TProgressbar", orient = HORIZONTAL, length = 100, mode = 'determinate')
+        self.progressbar.pack( padx = 15, pady = 15)
+        self.root.after(200,  lambda : arbo.collect_ids(self.progressbar,self.root, lbl = self.lbl))
+        self.root.mainloop()
+        
+    def get_root(self):
+        return self.root
+    
+    def get_progressbar(self):
+        return self.progressbar
+    
+    def get_style(self):
+        return self.style
 
 if __name__ == "__main__":
     App = Affichage()
