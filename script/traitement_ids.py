@@ -11,16 +11,18 @@ import sys
 import stat
 import genericpath
 from multiprocessing import Pool, Process, Manager, Queue,cpu_count, Semaphore, Value, Event
+from Bio.SeqFeature import SeqFeature, FeatureLocation, CompoundLocation
 
 from genericpath import *
 from Bio import Entrez
 from Bio import SeqIO
 
 
-with open("../pickle/organism_df", 'wb') as f:
-    pickle.dump(organism_df, f)
+#on ouvre le fichier pickle contenant les informations sur les organismes
+organism_df = pd.read_pickle("../pickle/organism_df.pkl")
 
-df = pd.read_pickle("../pickle/organism_df")
+
+df = pd.read_pickle("../pickle/organism_df.pkl")
 org="Campylobacter_coli"
 line = organism_df[organism_df["name"].str.replace(" ","_").replace("[","_").replace("]","_").replace(":","_").replace("/","_",regex=True) == org]
 df["nb_NC"] = df["NC"].apply(len)
@@ -30,7 +32,6 @@ print(name)
 print(path)
 print(NC_list)
 
-print("DHHDFIOHZIOSHDIOSHODIHIO")
 nb_region_found = 0
 nb_region_already_downloaded = 0
 
@@ -135,6 +136,23 @@ def join(path, *paths):
         genericpath._check_arg_types('join', path, *paths)
         raise
 
+def check_inf_sup(inf,sup):
+    """Fonction simple pour savoir qui est inferieur a qui
+
+    Args:
+        inf: value
+        sup: value
+
+    Returns:
+        true if inf is inferior or equal to sup
+        false if not
+    """
+    if(inf <= sup):
+        return True
+    else:
+        return False
+
+
 def extract(buffer_ecriture, header_str, selected_region, feature_location, record_fasta, is_complement):
     if selected_region == "intron":
         return buffer_ecriture
@@ -160,42 +178,11 @@ def extract(buffer_ecriture, header_str, selected_region, feature_location, reco
     buffer_ecriture += "\n"
     return buffer_ecriture
 
-def f(NC):
-
-
-    Entrez.email = ''.join(random.choice(string.ascii_lowercase) for i in range(20))+'@'+''.join(random.choice(string.ascii_lowercase) for i in range(20))+ '.com'
-    try :
-        print(f"  request for {NC} text")
-        handle_fasta = Entrez.efetch(db="nucleotide", id=NC, rettype="fasta", retmode="text")
-    except Exception as e:
-        print(f"1 for {NC} text",str(e))
-        if str(e) == "HTTP Error 429: Too Many Requests":
-            iter = 0
-            iter_max = 10
-            while True:
-                time.sleep(10) # on se calme un peu
-                try :
-                    print(f"  request for {NC} text (rerun 1)")
-                    handle_fasta = Entrez.efetch(db="nucleotide", id=NC, rettype="fasta", retmode="text")
-                    break
-                except Exception as e:
-                    iter += 1
-                    print(f"1.{iter} for {NC} text",str(e))
-                    if str(e) == "HTTP Error 429: Too Many Requests":
-                        continue
-                    elif iter > iter_max:
-                        return
-        else:
-            return
-    try:
-        # record_fasta = timeout(timeout=TIMEOUT_MAX)(SeqIO.read)(handle_fasta, "fasta")
-        record_fasta = SeqIO.read(handle_fasta, "fasta")
-    except Exception as e:
-        print(f"2 for {NC} text",e)
-        return
-    handle_fasta.close()
-
 def f2(number_region_found, number_region_already_found, path, NC, name, selected_region):
+    name = name.replace(" ", "_")
+    name = name.replace("[", "_")
+    name = name.replace("]", "_")
+    name = name.replace(":", "_")
     Entrez.email = ''.join(random.choice(string.ascii_lowercase) for i in range(20))+'@'+''.join(random.choice(string.ascii_lowercase) for i in range(20))+ '.com'
 
     iter = 0
@@ -239,7 +226,7 @@ def f2(number_region_found, number_region_already_found, path, NC, name, selecte
                 return "Erreur non gérée lors de la requête à l'API","red"
     try:
         # record = SeqIO.read(handle, 'gb')
-        records_fasta = list(SeqIO.parse(handle_fasta, "fasta"))
+        record_fasta = SeqIO.read(handle_fasta,"fasta")
         handle_fasta.close()
     except Exception as e:
         print(f"  error for request {NC} fasta (reading) : {str(e)}")
@@ -270,7 +257,7 @@ def f2(number_region_found, number_region_already_found, path, NC, name, selecte
             continue
 
         # nb_region_found = number_region_found.get()
-        nb_region_found += 1
+        # nb_region_found += 1
         # number_region_found.put(nb_region_found)
         NC_filename = selected_region + "_" + str(name) + "_" + str(NC) + ".txt"
         
@@ -308,12 +295,13 @@ def f2(number_region_found, number_region_already_found, path, NC, name, selecte
 
         # Si on doit écrire quelque chose on créé le fichier correspondant
         if buffer_ecriture != "" and buffer_ecriture != prev_buffer_ecriture:
+            print("path + name + '/' + NC_filename",path + name + "/" + NC_filename)
             with open(path + name + "/" + NC_filename, 'a+') as out:
                 out.write(buffer_ecriture)
             prev_buffer_ecriture = buffer_ecriture
             found_anything = True
         else:
-            nb_region_found = number_region_found.get()
+            # nb_region_found = number_region_found.get()
             nb_region_found -= 1
             number_region_found.put(nb_region_found)
     print(f"  Fin traitement {NC}")
@@ -328,6 +316,7 @@ nb_region_already_downloaded = 0
 number_region_found = 0
 number_region_already_found = 0
 selected_region = "CDS"
-
-a=f2(number_region_found, number_region_already_found, path, NC_list, name, selected_region)
+for NC in NC_list:
+    a=f2(number_region_found, number_region_already_found, path, NC, name, selected_region)
+    print(a)
 

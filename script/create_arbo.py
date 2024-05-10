@@ -99,3 +99,6 @@ organism_df = pd.DataFrame({
 if not os.path.exists("../pickle"):
     os.makedirs("../pickle")
 
+with open('../pickle/organism_df.pkl', 'wb') as f:
+    pickle.dump(organism_df, f)
+
