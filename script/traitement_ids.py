@@ -17,23 +17,18 @@ from genericpath import *
 from Bio import Entrez
 from Bio import SeqIO
 
+def load_dataframe():
+    #on ouvre le fichier pickle contenant les informations sur les organismes
+    organism_df = pd.read_pickle("../pickle/organism_df")
+    return organism_df
 
-#on ouvre le fichier pickle contenant les informations sur les organismes
-organism_df = pd.read_pickle("../pickle/organism_df.pkl")
-
-
-df = pd.read_pickle("../pickle/organism_df.pkl")
+organism_df = pd.read_pickle("../pickle/organism_df")
+df = pd.read_pickle("../pickle/organism_df")
 org="Campylobacter_coli"
 line = organism_df[organism_df["name"].str.replace(" ","_").replace("[","_").replace("]","_").replace(":","_").replace("/","_",regex=True) == org]
 df["nb_NC"] = df["NC"].apply(len)
 
-name, path, NC_list = line.iloc[0].values
-print(name)
-print(path)
-print(NC_list)
 
-nb_region_found = 0
-nb_region_already_downloaded = 0
 
 
 # Split a path in a drive specification (a drive letter followed by a
@@ -300,10 +295,10 @@ def f2(number_region_found, number_region_already_found, path, NC, name, selecte
                 out.write(buffer_ecriture)
             prev_buffer_ecriture = buffer_ecriture
             found_anything = True
-        else:
+        # else:
             # nb_region_found = number_region_found.get()
-            nb_region_found -= 1
-            number_region_found.put(nb_region_found)
+            # nb_region_found -= 1
+            # number_region_found.put(nb_region_found)
     print(f"  Fin traitement {NC}")
     intersec = sorted(list(set_expected_feature.intersection(set_feature_key)))
     if intersec and False:
@@ -311,12 +306,19 @@ def f2(number_region_found, number_region_already_found, path, NC, name, selecte
     else:
         return (f"fichier {NC_filename} créé","green") if found_anything else (f'[{selected_region}] non trouvée (aucune région connue dans ce NC)',"orange")
 
-nb_region_found = 0
-nb_region_already_downloaded = 0
-number_region_found = 0
-number_region_already_found = 0
-selected_region = "CDS"
-for NC in NC_list:
-    a=f2(number_region_found, number_region_already_found, path, NC, name, selected_region)
-    print(a)
+# nb_region_found = 0
+# nb_region_already_downloaded = 0
+# number_region_found = 0
+# number_region_already_found = 0
+# selected_region = "CDS"
+# name, path, NC_list = line.iloc[0].values
+# print(name)
+# print(path)
+# print(NC_list)
+
+# nb_region_found = 0
+# nb_region_already_downloaded = 0
+# for NC in NC_list:
+#     a=f2(number_region_found, number_region_already_found, path, NC, name, selected_region)
+#     print(a)
 
