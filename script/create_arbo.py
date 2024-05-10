@@ -110,6 +110,3 @@ def collect_ids(progressbar,root,lbl):
     with open("../pickle/organism_df", 'wb') as f:
         pickle.dump(organism_df, f)
 
-with open('../pickle/organism_df.pkl', 'wb') as f:
-    pickle.dump(organism_df, f)
-
