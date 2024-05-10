@@ -20,14 +20,15 @@ try:
 except:
     pass #ne marche pas sous linux
 
-
-# BG_COLOR = "#002000" # "#292a3d"
+#Couleurs
 BG_COLOR = "#292a3d"
 TXT_COLOR= "#E0FFE0" # "white"
 DISABLED_SCROLLBAR= "#191a2d"
 HOVER_COLOR = "#595a6d"
 STOP_COLOR = "#ff3030"
 HOVER_STOP_COLOR = "#ff0000"
+VERT_FONCE = "#00ff00"
+ANTHRACITE = "#191a2d"
 
 
 def collect_data() :
@@ -40,8 +41,8 @@ def collect_data() :
     lbl.pack(side = LEFT, anchor=  W, padx = 15, pady = 15)
     #Configuration du style de la progressbar
     style = ttk.Style(root)
-    style.configure("start.Horizontal.TProgressbar", troughcolor=BG_COLOR)
-    root.configure(bg=BG_COLOR)
+    style.configure("start.Horizontal.TProgressbar", troughcolor=ANTHRACITE, background=TXT_COLOR, thickness=20)
+    root.configure(bg=ANTHRACITE )
 
     
     #Création progressbar
