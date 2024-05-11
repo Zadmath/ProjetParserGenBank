@@ -6,7 +6,8 @@ from ttkwidgets import CheckboxTreeview
 import traitement_ids as fetch
 # from ttkthemes import ThemedTk
 import pandas as pd
-
+from multiprocessing import Pool, Process, Manager, Queue,cpu_count, Semaphore, Value, Event
+import traceback
 import os
 import sys
 import time
@@ -607,10 +608,33 @@ class FENETRE:
                     #     nb_region_found_1, nb_region_already_downloaded_1 = fetch.load_data_from_NC(index, name, path, NC_list, 'intron')
                     self.window.update()
                     #on affiche le type de self.selected_region
-                    print(type(self.selected_region.get()))
+                    print("SELECTED REGION")
+                    print(self.selected_region.get())
+                    nb_region_found = 0
+                    nb_region_already_downloaded = 0
+                    # Retire les duplicatas
+                    NC_list = list(dict.fromkeys(NC_list))
+
+                    myStack = Queue()
+                    number_region_found = Queue()
+                    number_region_found.put(nb_region_found)
+                    number_region_already_found = Queue()
+                    number_region_already_found.put(nb_region_found)
+                    nb_NC_done = Value('i', 0)
+                    to_log = Queue()
+                    interrupt_event = Event()
+
+
                     for NC in NC_list:
-                        nb_region_found_2, nb_region_already_downloaded_2 = fetch.f2(index, name, path, NC, self.selected_region.get(), self)
+                        myStack.put(NC)          
+                    print("STACK")                  
+                    nb_region_found_2, nb_region_already_downloaded_2 = fetch.f2(number_region_found, number_region_already_found, path, NC, name, self.selected_region.get())
                 except:
+                    #on affiche l'erreur 
+                    error_message = traceback.format_exc()
+                    print(error_message)
+                    
+
                     self.print_on_window(f"Erreur : l'organisme {i+1}/{len(self.org_selected)} [{org}] n'a aucun NC à traiter !","warning")
                     # import code
                     # code.interact(local=locals())
