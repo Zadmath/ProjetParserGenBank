@@ -22,11 +22,11 @@ def load_dataframe():
     organism_df = pd.read_pickle("../pickle/organism_df")
     return organism_df
 
-organism_df = pd.read_pickle("../pickle/organism_df")
-df = pd.read_pickle("../pickle/organism_df")
-org="Campylobacter_coli"
-line = organism_df[organism_df["name"].str.replace(" ","_").replace("[","_").replace("]","_").replace(":","_").replace("/","_",regex=True) == org]
-df["nb_NC"] = df["NC"].apply(len)
+# organism_df = pd.read_pickle("../pickle/organism_df")
+# df = pd.read_pickle("../pickle/organism_df")
+# org="Campylobacter_coli"
+# line = organism_df[organism_df["name"].str.replace(" ","_").replace("[","_").replace("]","_").replace(":","_").replace("/","_",regex=True) == org]
+# df["nb_NC"] = df["NC"].apply(len)
 
 
 

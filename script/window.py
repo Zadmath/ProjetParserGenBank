@@ -22,7 +22,7 @@ except:
     pass #ne marche pas sous linux
 
 #Couleurs
-BG_COLOR = "#292a3d"
+BG_COLOR = "#727387"
 TXT_COLOR= "#E0FFE0" # "white"
 DISABLED_SCROLLBAR= "#191a2d"
 HOVER_COLOR = "#595a6d"
@@ -66,7 +66,18 @@ class Affichage:
 class FENETRE:
     def __init__(self):
         # attribute
-        # Affichage()
+        #si le fichier pickle dans /pickle existe, on le charge
+        #is.path.exists detecte un fichier supprimé
+        #on affiche les fichiers dans le repertoire courant 
+        for file in os.listdir("."):
+            print(file)
+        if os.path.exists("../Results/"):
+            print("Fichier pickle trouvé")
+        else:
+            print("Fichier pickle non trouvé")
+            Affichage()
+        if not os.path.exists("../Results/"):
+            Affichage()
         self.organism_df : pd.DataFrame = fetch.load_dataframe()
 
         # Creation de la fenetre
@@ -151,7 +162,6 @@ class FENETRE:
 
         # Menu de selection des regions
         (self.selected_region, self.menu_menu, self.run_search, self.OptionList_region) = self.create_region_menu()
-        print("SLETCTET8DTD EREGIOOSDO")
         print(self.selected_region)
         list = Frame(self.window)
         list.grid(row=3,column=1)
@@ -598,8 +608,8 @@ class FENETRE:
                     self.window.update()
                     #on affiche le type de self.selected_region
                     print(type(self.selected_region.get()))
-
-                    nb_region_found_2, nb_region_already_downloaded_2 = fetch.f2(index, name, path, NC_list, self.selected_region.get(), self)
+                    for NC in NC_list:
+                        nb_region_found_2, nb_region_already_downloaded_2 = fetch.f2(index, name, path, NC, self.selected_region.get(), self)
                 except:
                     self.print_on_window(f"Erreur : l'organisme {i+1}/{len(self.org_selected)} [{org}] n'a aucun NC à traiter !","warning")
                     # import code

@@ -48,6 +48,7 @@ def traitement_overview(progressbar,root,lbl):
 
 
 def collect_ids(progressbar,root,lbl):
+    
     get_ids.get_ids()
     traitement_overview(progressbar,root,lbl)
     # parse fichier ids
