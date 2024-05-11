@@ -167,10 +167,6 @@ class FENETRE:
         list = Frame(self.window)
         list.grid(row=3,column=1)
         # Lancement
-        # for i in range(40):
-        #     self.print_on_window("","white")
-        
-        # self.treeview.expand_all()
 
         self.window.mainloop()
 
@@ -187,9 +183,7 @@ class FENETRE:
         name_nodes = os.listdir(node_path)
         name_nodes.sort()
 
-        # if name_nodes == [] : pass
 
-        # self.item_lengths["name_nodes"] = font.measure(str(item)) + depth*self.indent_treeview + 18 + (16 if len(self.treeview.get_children(item)) == 0 else 0) + 5
         total = 0
         for name in name_nodes :
             name_path = os.path.join(node_path, name)
@@ -485,15 +479,7 @@ class FENETRE:
         variable.set(OptionList[1]) #par défaut : CDS
 
         menu = ttk.OptionMenu(self.Info_lab1, variable, variable.get(), *OptionList)
-        # menu.config(bg=BG_COLOR,foreground=TXT_COLOR, activebackground="#466847",font=(None,9))
-        # menu["menu"].config(bg=BG_COLOR,foreground=TXT_COLOR,activebackground="#466847")
 
-        # menu = ttk.Menubutton(self.Info_lab1, text=variable.get())
-        # menu_ = Menu(menu, tearoff=False)
-        # for opt in OptionList:
-        #     menu_.add_radiobutton(label=opt, value=opt, variable=variable)
-        # # menu["borderwidth"]=1
-        # menu['menu'] = menu_
 
         menu.grid(row = 0, column = 1, sticky = NW)
         variable.trace("w", self.callback)
@@ -543,15 +529,11 @@ class FENETRE:
         
         
         self.org_selected = [self.treeview.item(x)["text"] for x in self.treeview.get_checked()]
-        # print("\n".join(str(x) for x in test))
-        # print(self.org_selected)
-        # return
+
 
         self.print_on_window("------------------Début de la recherche-------------------","white")
         self.window.update()
 
-        # self.org_selected = ["Homo_sapiens"]
-        # self.selected_region.set("mobile_element")
 
         if self.org_selected == [] :
             self.print_on_window("Aucun organisme choisi","warning")
@@ -578,7 +560,6 @@ class FENETRE:
             for i,org in enumerate(self.org_selected) :
                 if self.interrupt_signal:
                     break
-                # current_path = self.get_path(org).replace("Other1", "Other").replace("unclassified1", "unclassified").replace("uncultured_bacterium1", "uncultured_bacterium")
                 
                 nb_region_found = 0
                 nb_region_found_1 = 0
@@ -595,20 +576,15 @@ class FENETRE:
                     self.label_progress.config(text=f"0/{len(NC_list)}")
                     self.print_on_window(f"Organisme {i+1}/{len(self.org_selected)}: {name} ({len(NC_list)} NC à traiter)", "white")
                     
-                    # TODO debug homo sapiens
-                    # if name == "Homo sapiens":
-                    #     NC_list = ["NC_000021"]
-                    # for (index, name, path, NC_list) in self.organism_df.itertuples():
-                    # path_full = path + name.replace(" ", "_").replace("[", "_").replace("]", "_").replace(":", "_") + '/'
+
                     nb_new_region_found = -1
-                    # if path_full == current_path and name not in org_done:
+
                     print(f"1 {index} {name} {path} {NC_list} {len(NC_list)}")
                     c += 1
                     # if(self.selected_region.get() == 'CDS'):
                     #     nb_region_found_1, nb_region_already_downloaded_1 = fetch.load_data_from_NC(index, name, path, NC_list, 'intron')
                     self.window.update()
                     #on affiche le type de self.selected_region
-                    print("SELECTED REGION")
                     print(self.selected_region.get())
                     nb_region_found = 0
                     nb_region_already_downloaded = 0
@@ -636,49 +612,9 @@ class FENETRE:
                     
 
                     self.print_on_window(f"Erreur : l'organisme {i+1}/{len(self.org_selected)} [{org}] n'a aucun NC à traiter !","warning")
-                    # import code
-                    # code.interact(local=locals())
-                # nb_new_region_found = nb_region_found_1 + nb_region_found_2
-                # nb_new_region_already_downloaded = nb_region_already_downloaded_1 + nb_region_already_downloaded_2
-                # org_done.append(name)
-                # if nb_new_region_found == 0 and nb_new_region_already_downloaded == 0 and not self.interrupt_signal:
-                #     self.print_on_window("Région fonctionnelle choisie [" + self.selected_region.get() + "] non trouvée pour l'organisme [" + org + "]","orange")
-                #     c -= 1
-                # elif nb_new_region_found == 0 and nb_new_region_already_downloaded != 0:
-                #     # self.print_on_window("[" + self.selected_region.get() + "] pour [" + name + "] déjà télechargé ","white")
-                #     c -= 1
-                # else:
-                #     # self.print_on_window("[" + self.selected_region.get() + "] pour [" + name + "] télechargé ","green")
-                #     pass
+
                 self.window.update()
-                # nb_region_found += nb_new_region_found
-                # break
-                    
-                # elif current_path in path_full and name not in org_done:
-                #     print(f"2 {index} {name} {path} {NC_list} {len(NC_list)}")
-                #     c += 1
-                #     nb_region_found_1 = 0
-                #     nb_region_already_downloaded_1 = 0
-                #     self.window.update()
-                #     # if(self.selected_region.get() == 'CDS'):
-                #     #     nb_region_found_1, nb_region_already_downloaded_1 = fetch.load_data_from_NC(index, name, path, NC_list, 'intron')
-                #     nb_region_found_2, nb_region_already_downloaded_2 = fetch.load_data_from_NC(index, name, path, NC_list, self.selected_region.get())
 
-                #     nb_new_region_found = nb_region_found_1 + nb_region_found_2
-                #     nb_new_region_already_downloaded = nb_region_already_downloaded_1 + nb_region_already_downloaded_2
-
-                #     org_done.append(name)
-                # if nb_new_region_found != -1:
-                #     if nb_new_region_found == 0 and nb_new_region_already_downloaded == 0:
-                #         self.print_on_window("Région fonctionnelle choisie [" + self.selected_region.get() + "] non trouvé pour l'organisme [" + name + "]","red")
-                #         c -= 1
-                #     elif nb_new_region_found == 0 and nb_new_region_already_downloaded != 0:
-                #         self.print_on_window("[" + self.selected_region.get() + "] pour [" + name + "] déjà télechargé ","white")
-                #         c-=1
-                #     else:
-                #         self.print_on_window("[" + self.selected_region.get() + "] pour [" + name + "] télechargé ","green")
-                #     self.window.update()
-                #     nb_region_found += nb_new_region_found
                 self.print_on_window("","white")
             count+=1
             self.progressbar['value']=(float)(count/len(self.org_selected))*100
