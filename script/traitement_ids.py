@@ -232,8 +232,7 @@ def f2(number_region_found, number_region_already_found, path, NC, name, selecte
     #     nb_region_already_found += 1
     #     number_region_already_found.put(nb_region_already_found)
     #     return f"Déjà traité","green"
-    print("DANS LA FONCTION")
-    print(selected_region)
+
     name = name.replace(" ", "_")
     name = name.replace("[", "_")
     name = name.replace("]", "_")
@@ -302,11 +301,10 @@ def f2(number_region_found, number_region_already_found, path, NC, name, selecte
         feature_location = record[0]["GBSeq_feature-table"][i]["GBFeature_location"]
         feature_key = record[0]["GBSeq_feature-table"][i]["GBFeature_key"]
         set_feature_key.add(feature_key)
-        print("selected_region",selected_region)
-        print("feature_key",feature_key)
+
         if feature_key != selected_region and not (selected_region == "intron" and feature_key == "CDS"):
             continue
-        print("TRAITEMENT DE",feature_key) 
+
         nb_region_found = number_region_found.get()
         nb_region_found += 1
         number_region_found.put(nb_region_found)
@@ -324,7 +322,7 @@ def f2(number_region_found, number_region_already_found, path, NC, name, selecte
         # Parsing
         buffer_ecriture = ""
     
-        print(type(selected_region))
+
         header_str = selected_region + ' ' + name + ' ' + NC + ': '
         
         if feature_location.find("complement") != -1 and feature_location.find("join") != -1:
@@ -345,7 +343,6 @@ def f2(number_region_found, number_region_already_found, path, NC, name, selecte
 
         # Si on doit écrire quelque chose on créé le fichier correspondant
         if buffer_ecriture != "" and buffer_ecriture != prev_buffer_ecriture:
-            print("path + name + '/' + NC_filename",path + name + "/" + NC_filename)
 
             with open(path + name + "/" + NC_filename, 'a+') as out:
                 out.write(buffer_ecriture)

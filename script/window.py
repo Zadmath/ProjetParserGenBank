@@ -21,7 +21,7 @@ try:
     ctypes.windll.shcore.SetProcessDpiAwareness(True) # améliore la netteté de l'app
 except:
     pass #ne marche pas sous linux
-
+cwd = os.path.dirname(os.path.realpath(__file__))
 #Couleurs
 BG_COLOR = "#727387"
 TXT_COLOR= "#E0FFE0" # "white"
@@ -224,10 +224,11 @@ class FENETRE:
         treeview.configure(yscrollcommand=scrollbar.set)
         treeview.configure(xscrollcommand=scrollbar_h.set)
 
-        os.chdir(os.path.dirname(os.path.realpath(__file__)))
-        im_unchecked = Img.open(os.path.join("img_theme","unchecked.png"))
-        im_tristate = Img.open(os.path.join("img_theme","tristate.png"))
-        im_checked = Img.open(os.path.join("img_theme","checked.png"))
+        # os.chdir(os.path.dirname(os.path.realpath(__file__)))
+        cwd = os.getcwd()
+        im_unchecked = Img.open(os.path.join(cwd,"img_theme","unchecked.png"))
+        im_tristate = Img.open(os.path.join(cwd,"img_theme","tristate.png"))
+        im_checked = Img.open(os.path.join(cwd,"img_theme","checked.png"))
 
         for im in [im_unchecked, im_tristate, im_checked]:
             pixels = im.load()
@@ -264,31 +265,8 @@ class FENETRE:
         self.remove_boxes_for_nonleaf(treeview)
 
         
-        # self.item_lengths = {} # longueur en pixels de chaque, enregistré pour tout les dossiers dont les sous dossier sont des feuilles
-        
-        # node = treeview.get_children()[0]
-        # # print(node)
-        # font = tkFont.Font(size=self.font_treeview[1])
-        # print("computing lengths")
-        # for child_1 in treeview.get_children(node):
-        #     for child_2 in treeview.get_children(child_1):
-        #         for child_3 in treeview.get_children(child_2):
-        #             max_len_3 = -1
-        #             for leaf in treeview.get_children(child_3):
-        #                 v = font.measure(str(leaf)) + 4*self.indent_treeview + 18 + 16 + 5
-        #                 if v > max_len_3:
-        #                     max_len_3 = v
-        #             self.item_lengths[child_3] = max_len_3
-        # print("done")
+
         treeview.column("#0", width=460)
-
-
-        # for col in treeview['columns']:
-        #     treeview.heading(col, text=f"{col}", anchor=CENTER)
-        #     treeview.column(col, anchor=CENTER, width=40) # initially smaller size
-        # treeview.update()
-        # for col in treeview['columns']:
-        # treeview.column("#0", stretch=True, width=270, minwidth=270) # restore to desired size
 
         return treeview, scrollbar, scrollbar_h
 
@@ -352,18 +330,7 @@ class FENETRE:
     
 
     def after_click(self,evt=None):
-        # resize treeview
-        # shown = self.treeview.get_checked()
-        # maxwidth = -1
-        # itm = None
-        # for item in shown:
-        #     width = len(item)*10
-        #     if width > maxwidth:
-        #         maxwidth = width
-        #         itm = item
-        # if maxwidth != -1:
-        #     self.treeview.column("#0", minwidth = maxwidth, width=maxwidth)
-        #     print(f"new width = {maxwidth} for {itm}")
+
         return
         font = tkFont.Font(size=self.font_treeview[1])
         maxwidth = -1
@@ -395,7 +362,7 @@ class FENETRE:
         Info = Frame(self.window)
         Info.place(x=275, y=5, anchor="nw", width=730, height=95)
 
-        Info_lab1 = LabelFrame(Info, text="Selectionner une région fonctionnelle",font=(None,11), padx=10, pady=10,foreground=TXT_COLOR,background=BG_COLOR)
+        Info_lab1 = LabelFrame(Info, text="Selectionner une région",font=(None,11), padx=10, pady=10,foreground=TXT_COLOR,background=BG_COLOR)
         Info_lab1.pack(fill="both", expand="yes")
 
         label_progress=Label(Info_lab1,text="0/0",font=(None,9),foreground=TXT_COLOR,background=BG_COLOR)
@@ -603,8 +570,9 @@ class FENETRE:
 
                     for NC in NC_list:
                         myStack.put(NC)          
-                    print("STACK")                  
-                    nb_region_found_2, nb_region_already_downloaded_2 = fetch.f2(number_region_found, number_region_already_found, path, NC, name, self.selected_region.get())
+                    print("STACK")   
+                    for NC in NC_list:               
+                        nb_region_found_2, nb_region_already_downloaded_2 = fetch.f2(number_region_found, number_region_already_found, path, NC, name, self.selected_region.get())
                 except:
                     #on affiche l'erreur 
                     error_message = traceback.format_exc()
